@@ -1,0 +1,6 @@
+,ccp_alpha,max_depth,min_samples_leaf,min_samples_split,metric,n_neighbors,weights,max_features,n_estimators,learning_rate,criterion
+CART,0.1,20.0,2.0,10.0,,,,,,,
+KNN,,,,,manhattan,6,distance,,,,
+RRF,,20.0,1.0,2.0,,,,13.0,300.0,,
+CUBIST,,7.0,3.0,2.0,,,,,100.0,0.1,
+CIT,,13,2,20,,,,,,,squared_error

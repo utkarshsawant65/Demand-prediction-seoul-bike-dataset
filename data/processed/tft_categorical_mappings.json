@@ -1,0 +1,20 @@
+{
+  "Season": {
+    "Winter": "Winter",
+    "Spring": "Spring",
+    "Summer": "Summer",
+    "Autumn": "Autumn"
+  },
+  "Holiday": {
+    "Workday": "Workday",
+    "Holiday": "Holiday"
+  },
+  "Fday": {
+    "Func": "Func",
+    "NoFunc": "NoFunc"
+  },
+  "WeekStatus": {
+    "Weekday": "Weekday",
+    "Weekend": "Weekend"
+  }
+}
