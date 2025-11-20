@@ -1,0 +1,150 @@
+================================================================================
+FEATURE ENGINEERING REPORT
+Seoul Bike Demand Prediction
+================================================================================
+
+Generated: 2025-11-18 20:29:01
+
+--------------------------------------------------------------------------------
+DATA SUMMARY
+--------------------------------------------------------------------------------
+Original data shape: (8760, 15)
+Final train shape: (6840, 66)
+Final test shape: (1752, 66)
+Total features created: 65
+Rows dropped (NaN): 168
+
+--------------------------------------------------------------------------------
+DATE RANGES
+--------------------------------------------------------------------------------
+Training set: 2017-12-08 00:00:00 to 2018-09-18 00:00:00
+Testing set: 2018-09-19 00:00:00 to 2018-11-30 00:00:00
+
+--------------------------------------------------------------------------------
+FEATURE CATEGORIES
+--------------------------------------------------------------------------------
+1. Temporal Features (20):
+   - Basic: day_of_week, month, day_of_month, is_weekend, is_weekday
+   - Cyclical: hour_sin/cos, day_of_week_sin/cos, month_sin/cos
+   - Rush hours: is_morning_rush, is_evening_rush, is_rush_hour
+   - Time of day: time_of_day_night/morning/afternoon/evening
+   - Work hours: is_work_hour
+
+2. Lag Features (8):
+   - Demand: demand_lag_1h, 2h, 3h, 24h, 168h
+   - Weather: temp_lag_1h, humidity_lag_1h, wind_speed_lag_1h
+
+3. Rolling Statistics (10):
+   - Demand: rolling 3h/6h/12h/24h mean, 24h std/min/max
+   - Temperature: rolling 3h mean/std, 24h mean
+
+4. Interaction Features (13):
+   - Temperature: temp_x_hour, temp_x_is_rush_hour, temp_squared
+   - Comfort: is_comfortable_weather
+   - Weather: has_rain, has_snow, has_precipitation, low_visibility, bad_weather
+   - Derived: wind_chill, apparent_temp
+
+5. Weather Change Features (3):
+   - temp_change_1h, humidity_change_1h, wind_speed_change_1h
+
+6. Categorical Features:
+   - Season dummies: ['Season_Spring', 'Season_Summer', 'Season_Winter']
+   - is_holiday, is_functioning
+
+7. Original Weather Features (6):
+   - Temperature(°C), Humidity(%), Wind speed (m/s)
+   - Visibility (10m), Solar Radiation (MJ/m2)
+   - Rainfall(mm), Snowfall (cm)
+
+--------------------------------------------------------------------------------
+FEATURES DROPPED
+--------------------------------------------------------------------------------
+No highly correlated features dropped
+
+Original columns (transformed):
+  - Date
+  - Hour
+  - Seasons
+  - Holiday
+  - Functioning Day
+
+--------------------------------------------------------------------------------
+QUALITY CHECKS
+--------------------------------------------------------------------------------
+Missing values in train: 0
+Missing values in test: 0
+Infinite values in train: 0
+Infinite values in test: 0
+Column consistency: True
+
+--------------------------------------------------------------------------------
+ALL FEATURES (excluding target)
+--------------------------------------------------------------------------------
+  1. Temperature(°C)
+  2. Humidity(%)
+  3. Wind speed (m/s)
+  4. Visibility (10m)
+  5. Dew point temperature(°C)
+  6. Solar Radiation (MJ/m2)
+  7. Rainfall(mm)
+  8. Snowfall (cm)
+  9. day_of_week
+ 10. month
+ 11. day_of_month
+ 12. is_weekend
+ 13. is_weekday
+ 14. hour_sin
+ 15. hour_cos
+ 16. day_of_week_sin
+ 17. day_of_week_cos
+ 18. month_sin
+ 19. month_cos
+ 20. is_morning_rush
+ 21. is_evening_rush
+ 22. is_rush_hour
+ 23. time_of_day_night
+ 24. time_of_day_morning
+ 25. time_of_day_afternoon
+ 26. time_of_day_evening
+ 27. is_work_hour
+ 28. demand_lag_1h
+ 29. demand_lag_2h
+ 30. demand_lag_3h
+ 31. demand_lag_24h
+ 32. demand_lag_168h
+ 33. temp_lag_1h
+ 34. humidity_lag_1h
+ 35. wind_speed_lag_1h
+ 36. demand_rolling_3h_mean
+ 37. demand_rolling_6h_mean
+ 38. demand_rolling_12h_mean
+ 39. demand_rolling_24h_mean
+ 40. demand_rolling_24h_std
+ 41. demand_rolling_24h_min
+ 42. demand_rolling_24h_max
+ 43. temp_rolling_3h_mean
+ 44. temp_rolling_3h_std
+ 45. temp_rolling_24h_mean
+ 46. temp_x_hour
+ 47. temp_x_is_rush_hour
+ 48. temp_squared
+ 49. is_comfortable_weather
+ 50. has_rain
+ 51. has_snow
+ 52. has_precipitation
+ 53. low_visibility
+ 54. bad_weather
+ 55. wind_chill
+ 56. apparent_temp
+ 57. temp_change_1h
+ 58. humidity_change_1h
+ 59. wind_speed_change_1h
+ 60. Season_Spring
+ 61. Season_Summer
+ 62. Season_Winter
+ 63. is_holiday
+ 64. is_functioning
+
+================================================================================
+END OF REPORT
+================================================================================

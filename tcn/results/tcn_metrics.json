@@ -1,0 +1,45 @@
+{
+    "train_metrics": {
+        "R2": 0.89004444836402,
+        "RMSE": 213.02172814202876,
+        "MAE": 138.07665222851224,
+        "CV": 33.91488770802196,
+        "MAPE": 81.58157486971103
+    },
+    "test_metrics": {
+        "R2": 0.5471029739240709,
+        "RMSE": 411.1943986655432,
+        "MAE": 309.90033841443557,
+        "CV": 53.575049887997636,
+        "MAPE": 87.47313127189177
+    },
+    "feature_count": 14,
+    "features": [
+        "Hour",
+        "Temperature(\u00b0C)",
+        "Humidity(%)",
+        "Wind speed (m/s)",
+        "Visibility (10m)",
+        "Dew point temperature(\u00b0C)",
+        "Solar Radiation (MJ/m2)",
+        "Rainfall(mm)",
+        "Snowfall (cm)",
+        "Seasons_Spring",
+        "Seasons_Summer",
+        "Seasons_Winter",
+        "Holiday_No Holiday",
+        "Functioning Day_Yes"
+    ],
+    "model_config": {
+        "sequence_length": 24,
+        "num_channels": [
+            64,
+            64,
+            32
+        ],
+        "kernel_size": 3,
+        "dropout_rate": 0.2,
+        "num_features": 14
+    },
+    "timestamp": "2025-11-18 19:36:46"
+}

@@ -21,7 +21,7 @@ from datetime import datetime
 np.random.seed(42)
 tf.random.set_seed(42)
 
-def load_data(train_path='data/model_data/train.csv', test_path='data/model_data/test.csv'):
+def load_data(train_path='../data/feature_data/train.csv', test_path='../data/feature_data/test.csv'):
     """Load train and test data"""
     print("="*80)
     print("LOADING DATA")
@@ -41,50 +41,25 @@ def preprocess_data(train_df, test_df):
     print("PREPROCESSING DATA")
     print("="*80)
 
-    # Target column
-    target_col = 'Rented Bike Count'
+    # Target column - feature_data has both 'Rented Bike Count' and 'target'
+    target_col = 'target'
 
-    # Columns to exclude from features
-    exclude_cols = [target_col, 'Date']
+    # Columns to exclude from features (already engineered data, no Date column)
+    exclude_cols = [target_col, 'Rented Bike Count']
 
-    # Categorical columns that need encoding
-    categorical_cols = ['Seasons', 'Holiday', 'Functioning Day']
+    # Get feature columns (all columns except target columns)
+    feature_cols = [col for col in train_df.columns if col not in exclude_cols]
 
-    # Make copies to avoid modifying original data
-    train_processed = train_df.copy()
-    test_processed = test_df.copy()
+    # Extract features and target
+    X_train = train_df[feature_cols].values
+    y_train = train_df[target_col].values
 
-    # One-hot encode categorical variables
-    for col in categorical_cols:
-        if col in train_processed.columns:
-            # Get dummies for train
-            train_dummies = pd.get_dummies(train_processed[col], prefix=col, drop_first=True)
-            train_processed = pd.concat([train_processed.drop(col, axis=1), train_dummies], axis=1)
-
-            # Get dummies for test
-            test_dummies = pd.get_dummies(test_processed[col], prefix=col, drop_first=True)
-            test_processed = pd.concat([test_processed.drop(col, axis=1), test_dummies], axis=1)
-
-    # Align columns between train and test
-    train_cols = set(train_processed.columns)
-    test_cols = set(test_processed.columns)
-
-    # Add missing columns to test set
-    for col in train_cols - test_cols:
-        if col not in exclude_cols:
-            test_processed[col] = 0
-
-    # Separate features and target
-    feature_cols = [col for col in train_processed.columns if col not in exclude_cols]
-
-    X_train = train_processed[feature_cols].values
-    y_train = train_processed[target_col].values
-
-    X_test = test_processed[feature_cols].values
-    y_test = test_processed[target_col].values
+    X_test = test_df[feature_cols].values
+    y_test = test_df[target_col].values
 
     print(f"Features used: {len(feature_cols)}")
-    print(f"Feature names: {feature_cols[:10]}..." if len(feature_cols) > 10 else f"Feature names: {feature_cols}")
+    print(f"First 10 features: {feature_cols[:10]}")
+    print(f"Last 10 features: {feature_cols[-10:]}")
 
     # Scale features
     print("\nScaling features...")
