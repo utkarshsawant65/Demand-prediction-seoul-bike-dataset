@@ -63,6 +63,9 @@ venv.bak/
 # Claude Code settings
 .claude/
 
+# Thesis papers and private planning docs
+papers/
+
 # Model results and weights — not tracked
 */results/
 */models/
