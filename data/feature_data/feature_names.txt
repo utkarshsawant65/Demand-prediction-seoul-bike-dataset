@@ -1,0 +1,64 @@
+Temperature(°C)
+Humidity(%)
+Wind speed (m/s)
+Visibility (10m)
+Dew point temperature(°C)
+Solar Radiation (MJ/m2)
+Rainfall(mm)
+Snowfall (cm)
+day_of_week
+month
+day_of_month
+is_weekend
+is_weekday
+hour_sin
+hour_cos
+day_of_week_sin
+day_of_week_cos
+month_sin
+month_cos
+is_morning_rush
+is_evening_rush
+is_rush_hour
+time_of_day_night
+time_of_day_morning
+time_of_day_afternoon
+time_of_day_evening
+is_work_hour
+demand_lag_1h
+demand_lag_2h
+demand_lag_3h
+demand_lag_24h
+demand_lag_168h
+temp_lag_1h
+humidity_lag_1h
+wind_speed_lag_1h
+demand_rolling_3h_mean
+demand_rolling_6h_mean
+demand_rolling_12h_mean
+demand_rolling_24h_mean
+demand_rolling_24h_std
+demand_rolling_24h_min
+demand_rolling_24h_max
+temp_rolling_3h_mean
+temp_rolling_3h_std
+temp_rolling_24h_mean
+temp_x_hour
+temp_x_is_rush_hour
+temp_squared
+is_comfortable_weather
+has_rain
+has_snow
+has_precipitation
+low_visibility
+bad_weather
+wind_chill
+apparent_temp
+temp_change_1h
+humidity_change_1h
+wind_speed_change_1h
+Season_Spring
+Season_Summer
+Season_Winter
+is_holiday
+is_functioning
