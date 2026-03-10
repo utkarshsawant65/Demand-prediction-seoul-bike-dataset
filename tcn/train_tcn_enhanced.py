@@ -134,7 +134,7 @@ class BikeDataset(Dataset):
         return self.X[idx], self.y[idx]
 
 
-def load_data(train_path='data/model_data/train.csv', test_path='data/model_data/test.csv'):
+def load_data(train_path='data/feature_data/train.csv', test_path='data/feature_data/test.csv'):
     """Load train and test data"""
     print("="*80)
     print("LOADING DATA")
@@ -155,38 +155,17 @@ def preprocess_data(train_df, test_df):
     print("PREPROCESSING DATA")
     print("="*80)
 
-    # Target column
-    target_col = 'Rented Bike Count'
-
-    # Columns to exclude from features
-    exclude_cols = [target_col, 'Date']
-
-    # Categorical columns that need encoding
-    categorical_cols = ['Seasons', 'Holiday', 'Functioning Day']
-
     # Make copies to avoid modifying original data
     train_processed = train_df.copy()
     test_processed = test_df.copy()
 
-    # One-hot encode categorical variables
-    for col in categorical_cols:
-        if col in train_processed.columns:
-            # Get dummies for train
-            train_dummies = pd.get_dummies(train_processed[col], prefix=col, drop_first=True)
-            train_processed = pd.concat([train_processed.drop(col, axis=1), train_dummies], axis=1)
+    # Target column - try both possible names
+    if 'target' in train_processed.columns:
+        target_col = 'target'
+    else:
+        target_col = 'Rented Bike Count'
 
-            # Get dummies for test
-            test_dummies = pd.get_dummies(test_processed[col], prefix=col, drop_first=True)
-            test_processed = pd.concat([test_processed.drop(col, axis=1), test_dummies], axis=1)
-
-    # Align columns between train and test
-    train_cols = set(train_processed.columns)
-    test_cols = set(test_processed.columns)
-
-    # Add missing columns to test set
-    for col in train_cols - test_cols:
-        if col not in exclude_cols:
-            test_processed[col] = 0
+    exclude_cols = [target_col, 'Rented Bike Count', 'target']
 
     # Separate features and target
     feature_cols = [col for col in train_processed.columns if col not in exclude_cols]
@@ -270,25 +249,18 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
     """Train for one epoch"""
     model.train()
     total_loss = 0
-
     for X_batch, y_batch in dataloader:
         X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-
         # Forward pass
         optimizer.zero_grad()
         y_pred = model(X_batch).squeeze()
         loss = criterion(y_pred, y_batch)
-
         # Backward pass
         loss.backward()
-
         # Gradient clipping to prevent exploding gradients
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-
         optimizer.step()
-
         total_loss += loss.item()
-
     return total_loss / len(dataloader)
 
 
@@ -319,7 +291,7 @@ def train_model(model, train_loader, val_loader, epochs=150, learning_rate=0.001
 
     model = model.to(device)
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=2e-2)
 
     # Learning rate scheduler
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
@@ -399,7 +371,7 @@ def evaluate_model(model, X, y, target_scaler, device, set_name='Test'):
     cv = (rmse / np.mean(y_true)) * 100
 
     # Calculate MAPE, avoiding division by zero
-    mask = y_true != 0
+    mask = y_true > 10
     if mask.sum() > 0:
         mape = np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
     else:
@@ -474,13 +446,12 @@ def main():
     print("# SEOUL BIKE ENHANCED TCN MODEL TRAINING #")
     print("#"*80 + "\n")
 
-    # Enhanced Hyperparameters
-    SEQUENCE_LENGTH = 24  # Use 24 hours of history
-    NUM_CHANNELS = [128, 128, 64, 64, 32]  # Deeper network with 5 levels
+    SEQUENCE_LENGTH = 8
+    NUM_CHANNELS = [32, 16, 16]
     KERNEL_SIZE = 3
-    DROPOUT_RATE = 0.3  # Increased dropout to reduce overfitting
+    DROPOUT_RATE = 0.5
     EPOCHS = 150
-    BATCH_SIZE = 32
+    BATCH_SIZE = 64
     LEARNING_RATE = 0.001
     VALIDATION_SPLIT = 0.2
 

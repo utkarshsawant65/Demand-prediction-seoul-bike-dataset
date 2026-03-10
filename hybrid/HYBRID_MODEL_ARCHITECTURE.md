@@ -358,8 +358,7 @@ Based on ensemble theory and complementary learning:
 ### When to Use Individual Models:
 
 - **TCN Enhanced**: When you need fast inference and good accuracy
-- **LSTM Basic**: When you need simplicity and interpretability
-- **LSTM Enhanced**: Generally not recommended (overfits)
+- **LSTM Enhanced**: When you need simpler architecture with batch normalization
 
 ---
 

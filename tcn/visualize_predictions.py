@@ -104,7 +104,7 @@ class EnhancedTCN(nn.Module):
         return y
 
 
-def load_data(test_path='data/model_data/test.csv'):
+def load_data(test_path='data/feature_data/test.csv'):
     """Load test data"""
     print("Loading test data...")
     test_df = pd.read_csv(test_path)

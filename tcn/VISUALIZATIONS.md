@@ -135,7 +135,7 @@ The script will:
 ### Requirements:
 - Trained model: `tcn/models/tcn_enhanced_model.pth`
 - Scalers: `tcn/models/feature_scaler_enhanced.pkl`, `tcn/models/target_scaler_enhanced.pkl`
-- Test data: `data/model_data/test.csv`
+- Test data: `data/feature_data/test.csv`
 - Model config: `tcn/results/tcn_enhanced_metrics.json`
 
 ## Interpretation Guide

@@ -1,16 +1,16 @@
 """
-HYBRID LSTM-TCN Model Training for Seoul Bike Data
-Combines LSTM and TCN architectures for enhanced temporal pattern learning
+HYBRID TCN-LSTM Model Training for Seoul Bike Data (STANDARD PRACTICE)
+Sequential architecture: TCN → LSTM → Dense layers
 
 Architecture:
-    - TCN branch: Captures multi-scale temporal patterns with dilated convolutions
-    - LSTM branch: Captures sequential dependencies
-    - Feature fusion: Concatenate outputs from both branches
-    - Dense layers: Final prediction from combined features
+    - TCN layer: Extracts multi-scale temporal patterns first (feature extractor)
+    - LSTM layer: Processes TCN features to capture sequential dependencies
+    - Dense layers: Final prediction from LSTM output
 
 This hybrid approach leverages:
-    - TCN's strength in capturing long-term dependencies with efficient receptive field
-    - LSTM's strength in sequential pattern modeling
+    - TCN's strength in extracting multi-scale temporal features efficiently
+    - LSTM's strength in refining sequential patterns from TCN features
+    - Sequential flow follows standard deep learning practice for time series
 """
 
 import numpy as np
@@ -28,14 +28,19 @@ from datetime import datetime
 from tqdm import tqdm
 
 # Set random seeds for reproducibility
-np.random.seed(42)
-torch.manual_seed(42)
+SEED = 42
+np.random.seed(SEED)
+torch.manual_seed(SEED)
 if torch.cuda.is_available():
-    torch.cuda.manual_seed(42)
+    torch.cuda.manual_seed(SEED)
+    torch.cuda.manual_seed_all(SEED)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
+print(f"Random seed: {SEED}")
 
 
 # ============================================================================
@@ -144,12 +149,15 @@ class LSTMBranch(nn.Module):
 
 class HybridLSTMTCN(nn.Module):
     """
-    Hybrid LSTM-TCN Model
+    Hybrid TCN-LSTM Model (Standard Practice)
 
     Architecture:
-        1. Parallel processing through TCN and LSTM branches
-        2. Feature concatenation
-        3. Dense layers for final prediction
+        1. TCN layer: Extracts multi-scale temporal features first
+        2. LSTM layer: Processes TCN features to capture sequential dependencies
+        3. Dense layers: Final prediction from LSTM output
+
+    This follows the standard practice where TCN acts as feature extractor
+    and LSTM refines the temporal representations.
     """
     def __init__(self, num_features,
                  tcn_channels=[128, 128, 64, 64, 32],
@@ -158,47 +166,46 @@ class HybridLSTMTCN(nn.Module):
                  fusion_hidden=128,
                  dropout=0.3):
         super(HybridLSTMTCN, self).__init__()
-
-        # TCN branch
         self.tcn = TCNBranch(
             num_inputs=num_features,
             num_channels=tcn_channels,
             kernel_size=3,
-            dropout=dropout
-        )
-
-        # LSTM branch
-        self.lstm = LSTMBranch(
-            input_size=num_features,
+            dropout=dropout)
+        self.lstm = nn.LSTM(
+            input_size=self.tcn.output_size,
             hidden_size=lstm_hidden,
             num_layers=lstm_layers,
-            dropout=dropout
-        )
-
-        # Calculate combined feature size
-        combined_size = self.tcn.output_size + self.lstm.output_size
-
-        # Fusion layers
+            batch_first=True,
+            dropout=dropout if lstm_layers > 1 else 0)
+        self.dropout = nn.Dropout(dropout)
         self.fusion = nn.Sequential(
-            nn.Linear(combined_size, fusion_hidden),
+            nn.Linear(lstm_hidden, fusion_hidden),
             nn.ReLU(),
             nn.Dropout(dropout),
             nn.Linear(fusion_hidden, 64),
             nn.ReLU(),
             nn.Dropout(dropout),
-            nn.Linear(64, 1)
-        )
+            nn.Linear(64, 1))
 
     def forward(self, x):
-        # Process through both branches
-        tcn_out = self.tcn(x)      # (batch, tcn_output_size)
-        lstm_out = self.lstm(x)    # (batch, lstm_output_size)
+        # Step 1: TCN feature extraction across the entire sequence
+        # x shape: (batch, seq_len, features)
+        # TCN expects: (batch, features, seq_len)
+        x_tcn = x.transpose(1, 2)
+        tcn_out = self.tcn.network(x_tcn)  # (batch, tcn_channels[-1], seq_len)
 
-        # Concatenate features from both branches
-        combined = torch.cat([tcn_out, lstm_out], dim=1)
+        # Transpose back for LSTM: (batch, seq_len, tcn_channels[-1])
+        tcn_out = tcn_out.transpose(1, 2)
 
-        # Final prediction
-        output = self.fusion(combined)
+        # Step 2: LSTM processes TCN features sequentially
+        lstm_out, (hidden, cell) = self.lstm(tcn_out)
+
+        # Take the last timestep output
+        last_output = lstm_out[:, -1, :]
+        last_output = self.dropout(last_output)
+
+        # Step 3: Final prediction
+        output = self.fusion(last_output)
         return output
 
 
@@ -223,7 +230,7 @@ class BikeDataset(Dataset):
 # DATA PROCESSING
 # ============================================================================
 
-def load_data(train_path='../data/feature_data/train.csv', test_path='../data/feature_data/test.csv'):
+def load_data(train_path='data/feature_data/train.csv', test_path='data/feature_data/test.csv'):
     """Load train and test data"""
     print("="*80)
     print("LOADING DATA")
@@ -346,7 +353,7 @@ def validate_epoch(model, dataloader, criterion, device):
 def train_model(model, train_loader, val_loader, epochs=100, lr=0.001, device='cpu'):
     """Train the hybrid model"""
     print("\n" + "="*80)
-    print("TRAINING HYBRID LSTM-TCN MODEL")
+    print("TRAINING HYBRID TCN-LSTM MODEL (TCN -> LSTM -> Dense)")
     print("="*80)
 
     criterion = nn.MSELoss()
@@ -361,8 +368,8 @@ def train_model(model, train_loader, val_loader, epochs=100, lr=0.001, device='c
     history = {'train_loss': [], 'val_loss': []}
 
     # Create output directories
-    os.makedirs('models', exist_ok=True)
-    os.makedirs('results', exist_ok=True)
+    os.makedirs('hybrid/models', exist_ok=True)
+    os.makedirs('hybrid/results', exist_ok=True)
 
     print(f"\nTraining parameters:")
     print(f"  Epochs: {epochs}")
@@ -390,7 +397,7 @@ def train_model(model, train_loader, val_loader, epochs=100, lr=0.001, device='c
             best_val_loss = val_loss
             patience_counter = 0
             # Save best model
-            torch.save(model.state_dict(), 'models/best_hybrid_model.pth')
+            torch.save(model.state_dict(), 'hybrid/models/best_hybrid_model.pth')
         else:
             patience_counter += 1
 
@@ -399,7 +406,7 @@ def train_model(model, train_loader, val_loader, epochs=100, lr=0.001, device='c
             break
 
     # Load best model
-    model.load_state_dict(torch.load('models/best_hybrid_model.pth'))
+    model.load_state_dict(torch.load('hybrid/models/best_hybrid_model.pth'))
     print(f"\nTraining completed. Best validation loss: {best_val_loss:.4f}")
 
     return model, history
@@ -476,7 +483,8 @@ def save_results(train_metrics, test_metrics, history, feature_cols, model_info)
 
     # Save metrics
     results = {
-        'model_type': 'Hybrid LSTM-TCN',
+        'model_type': 'Hybrid TCN-LSTM (Standard Practice)',
+        'architecture_flow': 'TCN -> LSTM -> Dense',
         'train_metrics': train_metrics,
         'test_metrics': test_metrics,
         'feature_count': len(feature_cols),
@@ -485,7 +493,7 @@ def save_results(train_metrics, test_metrics, history, feature_cols, model_info)
         'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
 
-    with open('results/hybrid_metrics.json', 'w') as f:
+    with open('hybrid/results/hybrid_metrics.json', 'w') as f:
         json.dump(results, f, indent=4)
 
     print("Saved: results/hybrid_metrics.json")
@@ -497,7 +505,7 @@ def save_results(train_metrics, test_metrics, history, feature_cols, model_info)
         'val_loss': history['val_loss']
     })
 
-    history_df.to_csv('results/training_history.csv', index=False)
+    history_df.to_csv('hybrid/results/training_history.csv', index=False)
     print("Saved: results/training_history.csv")
 
     # Save metrics summary
@@ -510,7 +518,7 @@ def save_results(train_metrics, test_metrics, history, feature_cols, model_info)
         'MAPE': [train_metrics['MAPE'], test_metrics['MAPE']]
     })
 
-    metrics_df.to_csv('results/hybrid_metrics_summary.csv', index=False)
+    metrics_df.to_csv('hybrid/results/hybrid_metrics_summary.csv', index=False)
     print("Saved: results/hybrid_metrics_summary.csv")
 
 
@@ -521,7 +529,7 @@ def save_results(train_metrics, test_metrics, history, feature_cols, model_info)
 def main():
     """Main execution function"""
     print("\n" + "#"*80)
-    print("# HYBRID LSTM-TCN MODEL TRAINING #")
+    print("# HYBRID TCN-LSTM MODEL TRAINING (STANDARD PRACTICE) #")
     print("#"*80 + "\n")
 
     # Hyperparameters
@@ -572,7 +580,7 @@ def main():
 
     # Build model
     print("\n" + "="*80)
-    print("BUILDING HYBRID LSTM-TCN MODEL")
+    print("BUILDING HYBRID TCN-LSTM MODEL (STANDARD PRACTICE)")
     print("="*80)
 
     num_features = X_train_seq.shape[2]
@@ -628,14 +636,14 @@ def main():
     )
 
     # Save scalers
-    joblib.dump(scaler, 'models/feature_scaler.pkl')
-    joblib.dump(target_scaler, 'models/target_scaler.pkl')
+    joblib.dump(scaler, 'hybrid/models/feature_scaler.pkl')
+    joblib.dump(target_scaler, 'hybrid/models/target_scaler.pkl')
     print("\nSaved scalers:")
     print("  models/feature_scaler.pkl")
     print("  models/target_scaler.pkl")
 
     # Save final model
-    torch.save(model.state_dict(), 'models/hybrid_model.pth')
+    torch.save(model.state_dict(), 'hybrid/models/hybrid_model.pth')
     print("\nSaved final model:")
     print("  models/hybrid_model.pth")
 

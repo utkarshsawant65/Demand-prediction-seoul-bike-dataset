@@ -60,13 +60,10 @@ venv.bak/
 # !data/raw/.gitkeep
 # !data/processed/.gitkeep
 
-# Results and outputs (large files)
-# Uncomment if you don't want to track these
-# results/*.json
-# results/*.csv
-# models/*.pth
-# models/temporal/*.pth
-# models/temporal/*.rds
+# Model results and weights — not tracked
+*/results/
+*/models/
+results_proper_eval/
 
 # Reports and figures (large files)
 # reports/figures/**/*.png

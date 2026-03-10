@@ -11,13 +11,13 @@ This project uses a temporal split approach for creating training and testing da
 - **Total Dates**: 365 days (1 year of data)
 
 ### Training Dataset
-- **File**: `data/model_data/train.csv`
+- **File**: `data/feature_data/train.csv`
 - **Records**: 7,008 observations
 - **Date Range**: December 1, 2017 to September 18, 2018
 - **Percentage**: 80.00% of total data
 
 ### Testing Dataset
-- **File**: `data/model_data/test.csv`
+- **File**: `data/feature_data/test.csv`
 - **Records**: 1,752 observations
 - **Date Range**: September 19, 2018 to November 30, 2018
 - **Percentage**: 20.00% of total data

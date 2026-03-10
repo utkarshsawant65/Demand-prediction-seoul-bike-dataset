@@ -6,11 +6,7 @@ This folder contains the Temporal Convolutional Network (TCN) implementation for
 
 | Model | Test R² | Test RMSE | Test MAE |
 |-------|---------|-----------|----------|
-| TCN (Baseline) | 54.71% | 411.19 | 309.90 |
-| **TCN (Enhanced)** | **66.45%** | **353.89** | **264.32** |
-| LSTM | 65.37% | 359.56 | 250.12 |
-
-**The Enhanced TCN outperforms both the baseline TCN and LSTM!** See [MODEL_COMPARISON.md](MODEL_COMPARISON.md) for detailed analysis.
+| **TCN (Enhanced)** | **84.29%** | **242.20** | **171.69** |
 
 ## What is TCN?
 
@@ -22,26 +18,27 @@ Temporal Convolutional Network (TCN) is a powerful deep learning architecture sp
 
 ## Model Architecture
 
-The TCN model consists of:
-- **Temporal Blocks**: Multiple layers of dilated causal convolutions with exponentially increasing dilation rates
+The Enhanced TCN model consists of:
+- **5 Temporal Blocks**: Multiple layers of dilated causal convolutions with exponentially increasing dilation rates [1, 2, 4, 8, 16]
+- **Channel Configuration**: [128, 128, 64, 64, 32]
+- **Receptive Field**: 125 timesteps (covers full sequence + history)
 - **Residual Connections**: Skip connections that help training deeper networks
-- **Dropout Layers**: For regularization
-- **Final Dense Layer**: Maps TCN output to bike rental count prediction
+- **Dropout Layers**: 0.3 dropout rate for regularization
+- **Final Dense Layers**: Multi-layer output head for better mapping
 
 ## Files
 
-- `train_tcn.py`: Baseline TCN training script
-- `train_tcn_enhanced.py`: **Enhanced TCN training script (RECOMMENDED)**
+- `train_tcn_enhanced.py`: Enhanced TCN training script
 - `MODEL_COMPARISON.md`: Detailed analysis of TCN vs LSTM performance
 - `models/`: Directory containing saved models and scalers
-  - `tcn_model.pth`: Trained TCN model weights
-  - `best_tcn_model.pth`: Best model during training (lowest validation loss)
-  - `feature_scaler.pkl`: Scaler for input features
-  - `target_scaler.pkl`: Scaler for target variable
+  - `tcn_enhanced_model.pth`: Trained Enhanced TCN model weights
+  - `best_tcn_enhanced_model.pth`: Best model during training (lowest validation loss)
+  - `feature_scaler_enhanced.pkl`: Scaler for input features
+  - `target_scaler_enhanced.pkl`: Scaler for target variable
 - `results/`: Directory containing training results and metrics
-  - `tcn_metrics.json`: Detailed metrics and configuration
-  - `training_history.csv`: Training and validation loss per epoch
-  - `tcn_metrics_summary.csv`: Summary of metrics on train and test sets
+  - `tcn_enhanced_metrics.json`: Detailed metrics and configuration
+  - `training_history_enhanced.csv`: Training and validation loss per epoch
+  - `tcn_enhanced_metrics_summary.csv`: Summary of metrics on train and test sets
 
 ## Usage
 
@@ -51,27 +48,28 @@ Run the training script from the repository root:
 
 ```bash
 cd tcn
-python train_tcn.py
+python train_tcn_enhanced.py
 ```
 
 Or from the repository root:
 
 ```bash
-python tcn/train_tcn.py
+python tcn/train_tcn_enhanced.py
 ```
 
 ### Model Configuration
 
-The default hyperparameters in `train_tcn.py`:
+The default hyperparameters in `train_tcn_enhanced.py`:
 
 ```python
 SEQUENCE_LENGTH = 24      # Use 24 hours of history
-NUM_CHANNELS = [64, 64, 32]  # TCN channel sizes per level
+NUM_CHANNELS = [128, 128, 64, 64, 32]  # TCN channel sizes per level
 KERNEL_SIZE = 3           # Convolution kernel size
-DROPOUT_RATE = 0.2        # Dropout rate for regularization
-EPOCHS = 100              # Maximum training epochs
+DROPOUT_RATE = 0.3        # Dropout rate for regularization
+EPOCHS = 150              # Maximum training epochs
 BATCH_SIZE = 32           # Batch size for training
 LEARNING_RATE = 0.001     # Learning rate for Adam optimizer
+WEIGHT_DECAY = 1e-5       # L2 regularization
 VALIDATION_SPLIT = 0.2    # 20% of training data for validation
 ```
 
@@ -79,8 +77,8 @@ VALIDATION_SPLIT = 0.2    # 20% of training data for validation
 
 The model expects the following data structure:
 
-- Training data: `data/model_data/train.csv`
-- Test data: `data/model_data/test.csv`
+- Training data: `data/feature_data/train.csv`
+- Test data: `data/feature_data/test.csv`
 
 Required columns:
 - `Date`: Date and time information
@@ -106,10 +104,13 @@ Required columns:
    - Sequence creation for temporal patterns
 
 2. **Training Features**:
-   - Early stopping with patience of 15 epochs
+   - Early stopping with patience of 20 epochs
    - Model checkpointing (saves best model based on validation loss)
    - Train/validation split for model evaluation
    - MSE loss function with Adam optimizer
+   - Learning rate scheduling (ReduceLROnPlateau)
+   - Gradient clipping for stable training
+   - Weight decay for regularization
 
 3. **Evaluation Metrics**:
    - R² (Coefficient of Determination)
