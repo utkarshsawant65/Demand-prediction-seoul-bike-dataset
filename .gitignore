@@ -60,6 +60,9 @@ venv.bak/
 # !data/raw/.gitkeep
 # !data/processed/.gitkeep
 
+# Claude Code settings
+.claude/
+
 # Model results and weights — not tracked
 */results/
 */models/
