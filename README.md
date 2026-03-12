@@ -1,6 +1,40 @@
 # Seoul Bike Demand Prediction
 
-Hourly bike rental demand forecasting for Seoul's bike-sharing system using deep learning. Seven models (2 baselines + 5 hybrids) are trained and compared under a one-step-ahead evaluation protocol.
+
+---
+
+## Abstract
+
+Bike-sharing programmes have become an important part of urban transport infrastructure, and there is a need to forecast short-term demand to prevent stations running out of bicycles or parking spaces. This thesis assesses various deep learning architectures, including standalone and hybrid models, for hourly bike rental demand forecasting in Seoul. A complete feature engineering pipeline is constructed and seven models are trained using historical bike rental, weather, and time-related information from the UCI Seoul Bike Sharing dataset. All models are evaluated under a strict one-step-ahead temporal protocol to ensure realistic performance estimates.
+
+---
+
+## Research Questions
+
+1. Can deep learning models accurately capture the nonlinear temporal patterns of Seoul bike-sharing demand, offering accurate short-term forecasts?
+2. How does the combination of weather, temporal, and historical demand features contribute to prediction performance?
+3. Do hybrid architectures combining multiple model paradigms outperform individual baselines?
+4. What is the best architectural configuration for bike demand forecasting and what trade-offs exist among prediction accuracy, model complexity, and computational efficiency?
+
+---
+
+## Results
+
+All seven models evaluated under one-step-ahead temporal protocol on an unseen test set (Sep 19 - Nov 30, 2018).
+
+| Rank | Model | Parameters | Train R2 | Test R2 | Test RMSE | Test MAE |
+|------|-------|-----------|----------|---------|-----------|----------|
+| 1 | Multi-Scale TCN+LSTM | 92,849 | 97.30% | 88.83% | 204.24 | 141.27 |
+| 2 | LSTM-XGBoost | 222,272+XGB | 97.50% | 86.67% | 223.09 | 151.89 |
+| 3 | TCN-GRU-Attention | 294,177 | 95.60% | 85.58% | 231.98 | 151.91 |
+| 4 | TCN-LSTM | 484,641 | 89.90% | 84.75% | 238.60 | 158.25 |
+| 5 | TCN-CBAM-LSTM | 330,382 | 94.37% | 84.37% | 241.59 | 173.92 |
+| 6 | TCN | - | 96.92% | 81.92% | 260.47 | 198.89 |
+| 7 | LSTM | - | 95.66% | 75.76% | 300.58 | 218.80 |
+
+The Multi-Scale TCN+LSTM achieves the highest accuracy with the fewest parameters among all hybrid models, demonstrating that architecture design matters more than model size.
+
+---
 
 ## Dataset
 
