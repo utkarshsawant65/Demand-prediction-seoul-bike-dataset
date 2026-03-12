@@ -1,5 +1,5 @@
 """
-ENSEMBLE HYBRID TCN-LSTM Model - Target 88.37% R²
+ENSEMBLE HYBRID TCN-LSTM Model 
 
 Strategy:
 1. Train multiple models with different random seeds
@@ -334,7 +334,7 @@ def evaluate(preds, actuals, target_scaler, name='Test'):
 
 def main():
     print("\n" + "#"*60)
-    print("# ENSEMBLE HYBRID TCN-LSTM - TARGET: 88.37% R²")
+    print("# ENSEMBLE HYBRID TCN-LSTM")
     print("#"*60)
 
     SEQ_LEN = 24
