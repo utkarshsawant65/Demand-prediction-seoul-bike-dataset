@@ -1,12 +1,5 @@
 # Data-Driven Approaches to Optimizing Urban Bike Sharing Systems
 
-**Master Thesis** | SRH University Heidelberg | M.Sc. Applied Data Science and Analytics
-
-**Author:** Utkarsh Sawant (Matriculation no: 11038703)
-
-**Supervisors:** Prof. Dr. Binh Vu, Prof. Dr. Swati Chandna
-
-**Date:** 10 March 2026
 
 ---
 
