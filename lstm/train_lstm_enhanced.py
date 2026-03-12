@@ -190,54 +190,37 @@ def validate(model, dataloader, criterion):
 
 
 def train_model(model, train_loader, val_loader, epochs=150, lr=0.001, weight_decay=1e-3):
-    print("\n" + "=" * 80)
     print("TRAINING ENHANCED LSTM MODEL")
-    print("=" * 80)
-
     os.makedirs('lstm/models', exist_ok=True)
     os.makedirs('lstm/results', exist_ok=True)
-
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.5, patience=10, min_lr=1e-5
-    )
-
-    print(f"\nTraining parameters:")
-    print(f"  Max epochs: {epochs}")
-    print(f"  Learning rate: {lr}")
-    print(f"  Weight decay: {weight_decay}")
-
+        optimizer, mode='min', factor=0.5, patience=10, min_lr=1e-5)
     history = {'train_loss': [], 'val_loss': []}
     best_val_loss = float('inf')
     patience_counter = 0
     early_stop_patience = 20
     best_state = None
-
     for epoch in range(epochs):
         train_loss = train_epoch(model, train_loader, criterion, optimizer)
         val_loss = validate(model, val_loader, criterion)
-
         history['train_loss'].append(train_loss)
         history['val_loss'].append(val_loss)
         scheduler.step(val_loss)
-
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_state = {k: v.clone() for k, v in model.state_dict().items()}
             patience_counter = 0
         else:
             patience_counter += 1
-
         if (epoch + 1) % 10 == 0 or epoch < 3:
             print(f"Epoch [{epoch+1:3d}/{epochs}] - Train Loss: {train_loss:.4f}, "
                   f"Val Loss: {val_loss:.4f}")
-
         if patience_counter >= early_stop_patience:
             print(f"\nEarly stopping at epoch {epoch+1}")
             break
-
     print(f"\nRestoring best checkpoint (val_loss={best_val_loss:.4f})")
     model.load_state_dict(best_state)
     torch.save(model.state_dict(), 'lstm/models/best_lstm_enhanced_model.pth')
