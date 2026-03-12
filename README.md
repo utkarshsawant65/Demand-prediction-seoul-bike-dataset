@@ -1,22 +1,6 @@
 # Seoul Bike Demand Prediction
 
 
----
-
-## Abstract
-
-Bike-sharing programmes have become an important part of urban transport infrastructure, and there is a need to forecast short-term demand to prevent stations running out of bicycles or parking spaces. This thesis assesses various deep learning architectures, including standalone and hybrid models, for hourly bike rental demand forecasting in Seoul. A complete feature engineering pipeline is constructed and seven models are trained using historical bike rental, weather, and time-related information from the UCI Seoul Bike Sharing dataset. All models are evaluated under a strict one-step-ahead temporal protocol to ensure realistic performance estimates.
-
----
-
-## Research Questions
-
-1. Can deep learning models accurately capture the nonlinear temporal patterns of Seoul bike-sharing demand, offering accurate short-term forecasts?
-2. How does the combination of weather, temporal, and historical demand features contribute to prediction performance?
-3. Do hybrid architectures combining multiple model paradigms outperform individual baselines?
-4. What is the best architectural configuration for bike demand forecasting and what trade-offs exist among prediction accuracy, model complexity, and computational efficiency?
-
----
 
 ## Results
 
