@@ -11,29 +11,25 @@
   </p>
 </p>
 
----
-
 ## Overview
 
-An end-to-end forecasting system that predicts hourly bike rental demand for Seoul's public bike-sharing network. The pipeline ingests raw weather, temporal, and historical usage data, engineers 30 predictive features, and benchmarks **7 deep learning architectures** — from standalone baselines to novel hybrid designs — under a strict **one-step-ahead temporal evaluation protocol**.
+An end-to-end forecasting system that predicts hourly bike rental demand for Seoul's public bike-sharing network. The pipeline ingests raw weather, temporal, and historical usage data, engineers 30 predictive features, and benchmarks **7 deep learning architectures**, from standalone baselines to novel hybrid designs, under a strict **one-step-ahead temporal evaluation protocol**.
 
 The best model (**Multi-Scale TCN+LSTM**) achieves **88.83% R2** with only **92K parameters**, outperforming architectures 5x its size.
 
 ### Key Highlights
 
-- **30-feature engineering pipeline** with automated data leakage prevention
+- **30 feature engineering pipeline** with automated data leakage prevention
 - **7 model architectures** spanning LSTM, TCN, attention, CBAM, XGBoost, and multi-scale designs
-- **One-step-ahead evaluation** — predictions use only past data, no future leakage
-- **Reproducible** — each model is a self-contained training script with consistent data splits
-
----
+- **One-step-ahead evaluation**: predictions use only past data, no future leakage
+- **Reproducible**: each model is a self-contained training script with consistent data splits
 
 ## Results
 
-All models evaluated on unseen test data (Sep 19 – Nov 30, 2018) using one-step-ahead protocol.
+All models evaluated on unseen test data (Sep 19 toNov 30, 2018) using one-step-ahead protocol.
 
 | Rank | Model | Parameters | Test R2 | Test RMSE | Test MAE |
-|:----:|-------|:----------:|:-------:|:---------:|:--------:|
+|:<br/>-:|<br/><br/>-|:<br/><br/><br/>-:|:<br/><br/>-:|:<br/><br/><br/>:|:<br/><br/>--:|
 | 1 | **Multi-Scale TCN+LSTM** | 92,849 | **88.83%** | **204.24** | **141.27** |
 | 2 | LSTM-XGBoost | 222,272+XGB | 86.67% | 223.09 | 151.89 |
 | 3 | TCN-GRU-Attention | 294,177 | 85.58% | 231.98 | 151.91 |
@@ -44,26 +40,26 @@ All models evaluated on unseen test data (Sep 19 – Nov 30, 2018) using one-ste
 
 > All hybrid architectures outperform both baselines. The Multi-Scale TCN+LSTM achieves the highest accuracy with the smallest parameter count among hybrids.
 
----
+<br/>
 
 ## Models
 
 ### Baselines
 | Model | Description | Script |
-|-------|-------------|--------|
+|<br/><br/>-|<br/><br/><br/><br/>-|<br/><br/>--|
 | **LSTM** | 2-layer stacked LSTM with batch normalization and dropout | `lstm/train_lstm_enhanced.py` |
 | **TCN** | 3-block dilated causal convolution network with residual connections | `tcn/train_tcn_enhanced.py` |
 
 ### Hybrid Architectures
 | Model | Description | Script |
-|-------|-------------|--------|
+|<br/><br/>-|<br/><br/><br/><br/>-|<br/><br/>--|
 | **TCN-LSTM** | Sequential pipeline: 5-block TCN feature extraction followed by 2-layer LSTM refinement | `hybrid/train_hybrid.py` |
 | **TCN-GRU-Attention** | TCN + GRU with multi-head self-attention for selective temporal weighting | `tcn_gru_attention/train_tcn_gru_attention.py` |
 | **TCN-CBAM-LSTM** | TCN + Convolutional Block Attention Module (channel + spatial attention) + LSTM | `tcn_cbam_lstm/train_tcn_cbam_lstm.py` |
 | **LSTM-XGBoost** | Two-stage ensemble: LSTM feature extractor feeding XGBoost regressor | `lstm_xgboost/train_lstm_xgboost.py` |
 | **Multi-Scale TCN+LSTM** | Three parallel TCN branches (kernel sizes 2, 3, 5) + LSTM with mixup augmentation | `multi_scale_tcn/train_multi_scale_tcn_lstm.py` |
 
----
+<br/>
 
 ## Architecture
 
@@ -95,14 +91,14 @@ Sliding Window (24h lookback) ──> Input tensor: (batch, 24, 30)
 One-Step-Ahead Evaluation ──> R2, RMSE, MAE
 ```
 
----
+<br/>
 
 ## Feature Engineering
 
 The pipeline (`feature_engineering.py`) transforms 14 raw columns into **30 optimized features**:
 
 | Domain | Features | Examples |
-|--------|:--------:|---------|
+|<br/><br/>--|:<br/><br/>--:|<br/><br/><br/>|
 | Demand History | 6 | `demand_lag_1h`, `demand_lag_24h`, `demand_lag_168h`, `rolling_3h_mean`, `rolling_24h_std`, `rolling_24h_max` |
 | Temperature | 3 | `temperature`, `temp_squared`, `temp_x_hour` |
 | Weather | 4 | `humidity`, `visibility`, `solar_radiation`, `has_precipitation` |
@@ -112,22 +108,22 @@ The pipeline (`feature_engineering.py`) transforms 14 raw columns into **30 opti
 
 Scalers are fitted **exclusively on training data** to prevent information leakage. An automated safety check verifies no target-correlated columns are present in model inputs.
 
----
+<br/>
 
 ## Dataset
 
-**Source:** [UCI Machine Learning Repository — Seoul Bike Sharing Demand](https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand)
+**Source:** [UCI Machine Learning Repository:Seoul Bike Sharing Demand](https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand)
 
 | Property | Value |
-|----------|-------|
+|<br/><br/><br/>-|<br/><br/>-|
 | Records | 8,760 hourly observations |
-| Period | Dec 1, 2017 – Nov 30, 2018 |
-| Train set | 6,840 samples (Dec 2017 – Sep 18, 2018) |
-| Test set | 1,728 samples (Sep 19 – Nov 30, 2018) |
-| Input shape | `(24, 30)` — 24-hour window, 30 features |
+| Period | Dec 1, 2017 toNov 30, 2018 |
+| Train set | 6,840 samples (Dec 2017 toSep 18, 2018) |
+| Test set | 1,728 samples (Sep 19 toNov 30, 2018) |
+| Input shape | `(24, 30)`:24-hour window, 30 features |
 | Target | Hourly rented bike count (next hour) |
 
----
+<br/>
 
 ## Project Structure
 
@@ -176,12 +172,12 @@ Scalers are fitted **exclusively on training data** to prevent information leaka
     └── results/
 ```
 
----
+<br/>
 
 ## Tech Stack
 
 | Component | Technology | Version |
-|-----------|------------|---------|
+|<br/><br/><br/>--|<br/><br/><br/><br/>|<br/><br/><br/>|
 | Deep Learning | PyTorch | 2.9 |
 | Deep Learning | TensorFlow / Keras | 2.2 |
 | Gradient Boosting | XGBoost | 3.1 |
@@ -191,7 +187,7 @@ Scalers are fitted **exclusively on training data** to prevent information leaka
 | Language | Python | 3.12 |
 | Hardware | Intel Core i7, 16 GB RAM | CPU-only |
 
----
+<br/>
 
 ## Quick Start
 
@@ -237,8 +233,16 @@ Each script automatically:
 - Saves evaluation metrics (R2, RMSE, MAE) to `results/`
 - Saves training history to `results/`
 
----
+<br/>
+
+## Future Work
+
+- **Interactive Streamlit Dashboard**: Building a multi-page web dashboard for exploring model predictions, comparing architectures, and visualizing feature importance interactively. The dashboard will load saved predictions and metrics (no live inference) and allow users to filter by time range, model, and weather conditions.
+- **Multi-step Forecasting**: Extending the pipeline to predict demand multiple hours ahead instead of single-step
+- **Additional Datasets**: Validating the architectures on bike-sharing systems from other cities
+
+<br/>
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT. See [LICENSE](LICENSE) for details.
