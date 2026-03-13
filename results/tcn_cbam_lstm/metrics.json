@@ -1,0 +1,15 @@
+{
+  "model_name": "TCN-CBAM-LSTM",
+  "rank": 5,
+  "parameters": 330382,
+  "train_metrics": {
+    "R2": 0.943658,
+    "RMSE": 154.23,
+    "MAE": 110.44
+  },
+  "test_metrics": {
+    "R2": 0.843669,
+    "RMSE": 241.59,
+    "MAE": 173.92
+  }
+}

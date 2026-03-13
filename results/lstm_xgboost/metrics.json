@@ -1,0 +1,15 @@
+{
+  "model_name": "LSTM-XGBoost",
+  "rank": 2,
+  "parameters": "222,272+XGB",
+  "train_metrics": {
+    "R2": 0.980927,
+    "RMSE": 89.73,
+    "MAE": 59.48
+  },
+  "test_metrics": {
+    "R2": 0.866691,
+    "RMSE": 223.09,
+    "MAE": 151.89
+  }
+}

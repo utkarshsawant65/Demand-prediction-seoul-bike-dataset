@@ -1,0 +1,15 @@
+{
+  "model_name": "LSTM",
+  "rank": 7,
+  "parameters": 17537,
+  "train_metrics": {
+    "R2": 0.956609,
+    "RMSE": 135.35,
+    "MAE": 89.04
+  },
+  "test_metrics": {
+    "R2": 0.757569,
+    "RMSE": 300.58,
+    "MAE": 218.8
+  }
+}
