@@ -13,30 +13,6 @@
 
 ## Overview
 
-An end-to-end forecasting system that predicts hourly bike rental demand for Seoul's public bike-sharing network. The pipeline ingests raw weather, temporal, and historical usage data, engineers 30 predictive features, and benchmarks **7 deep learning architectures**, from standalone baselines to novel hybrid designs, under a strict **one-step-ahead temporal evaluation protocol**.
-
-The best model (**Multi-Scale TCN+LSTM**) achieves **88.83% R2** with only **92K parameters**, outperforming architectures 5x its size.
-
-### Key Highlights
-
-- **30 feature engineering pipeline** with automated data leakage prevention
-- **7 model architectures** spanning LSTM, TCN, attention, CBAM, XGBoost, and multi-scale designs
-- **One-step-ahead evaluation**: predictions use only past data, no future leakage
-- **Reproducible**: each model is a self-contained training script with consistent data splits
-
-## Results
-
-All models evaluated on unseen test data (Sep 19 to Nov 30, 2018) using one-step-ahead protocol.
-
-| Rank | Model | Parameters | Test R2 | Test RMSE | Test MAE |
-|:----:|-------|:----------:|:-------:|:---------:|:--------:|
-| 1 | **Multi-Scale TCN+LSTM** | 92,849 | **88.83%** | **204.24** | **141.27** |
-| 2 | LSTM-XGBoost | 222,272+XGB | 86.67% | 223.09 | 151.89 |
-| 3 | TCN-GRU-Attention | 294,177 | 85.58% | 231.98 | 151.91 |
-| 4 | TCN-LSTM | 484,641 | 84.75% | 238.60 | 158.25 |
-| 5 | TCN-CBAM-LSTM | 330,382 | 84.37% | 241.59 | 173.92 |
-| 6 | TCN (baseline) | - | 81.92% | 260.47 | 198.89 |
-| 7 | LSTM (baseline) | - | 75.76% | 300.58 | 218.80 |
 
 > All hybrid architectures outperform both baselines. The Multi-Scale TCN+LSTM achieves the highest accuracy with the smallest parameter count among hybrids.
 
