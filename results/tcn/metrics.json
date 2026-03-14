@@ -1,0 +1,15 @@
+{
+  "model_name": "TCN",
+  "rank": 6,
+  "parameters": null,
+  "train_metrics": {
+    "R2": 0.930494,
+    "RMSE": 171.13,
+    "MAE": 107.84
+  },
+  "test_metrics": {
+    "R2": 0.819214,
+    "RMSE": 260.47,
+    "MAE": 198.89
+  }
+}

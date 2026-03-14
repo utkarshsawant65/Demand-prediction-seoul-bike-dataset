@@ -60,11 +60,10 @@ venv.bak/
 # !data/raw/.gitkeep
 # !data/processed/.gitkeep
 
-# Claude Code settings
-.claude/
 
-# Thesis papers and private planning docs
+.claude/
 papers/
+streamlit/
 
 # Model results and weights — not tracked
 */results/
